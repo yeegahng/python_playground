@@ -29,7 +29,7 @@ def get_target_numbers(numCount, hide):
     return targetDigitList
 
 
-def input_pitching_numbers(numCount): #한자리씩 입력
+def input_pitching_numbers(numCount):  # 입력방법1: 한자리씩 입력
     inputDigitList = []
     inputDigit = ''
     while len(inputDigitList) < numCount:
@@ -50,7 +50,7 @@ def input_pitching_numbers(numCount): #한자리씩 입력
     return inputDigitList
 
 
-def input_pitching_number_set(numCount): #숫자열로 입력
+def input_pitching_number_set(numCount):  # 입력방법2: 숫자열로 입력
     #inputDigitList = []
     while True:
         inputNumber = input(str(numCount) + "자리 숫자를 입력하세요: ")
@@ -61,7 +61,7 @@ def input_pitching_number_set(numCount): #숫자열로 입력
         if inputNumber.isdecimal() is not True:
             print(inputNumber, "는 숫자열이 아닙니다. 다시 입력하세요.")
             continue
-        if len(set(inputNumber)) is not numCount:
+        if len(set(inputNumber)) is not numCount:  # Set은 중복 요소를 통합하므로, 자릿수 비교를 통해 중복 검사가 가능하다.
             print(inputNumber, '에 중복 숫자가 포함되어 있습니다. 다시 입력하세요.')
             continue
         inputDigitList = list(inputNumber)
@@ -115,13 +115,17 @@ def get_record_filepath(filename):
         os.mkdir(dirPath)
     return dirPath + filename
 
+
+def get_datetime_string():
+    return datetime.now().strftime("%Y-%m-%d_%H:%M:%S")
+
 ########
 # Game Play Record
 ########
 def update_game_play_record(playerName, inningScore):
     filePath = get_record_filepath("game_play_record.txt")
     gamePlayRecordList = load_file_to_list(filePath)
-    gamePlayRecordList.append((str(datetime.now().date())+"-"+str(datetime.now().hour)+":"+str(datetime.now().minute)+":"+str(datetime.now().second), playerName, inningScore))
+    gamePlayRecordList.append((get_datetime_string(), playerName, inningScore))
     save_list_to_file(gamePlayRecordList, filePath)
     print_record(gamePlayRecordList, "번호\t날짜\t이름\t공격횟수")
 
@@ -135,16 +139,16 @@ def update_top_score_record(playerName, inningScore):
 
     newRank = 0
     if len(topScoreRecordList) == 0:
-        topScoreRecordList.insert(0, (playerName, inningScore, (str(datetime.now().date())+"-"+str(datetime.now().hour)+":"+str(datetime.now().minute)+":"+str(datetime.now().second))))
+        topScoreRecordList.insert(newRank, (playerName, inningScore, get_datetime_string()))
     else:
         for playerRecord, inningRecord, timeRecord in topScoreRecordList:
             if inningScore < int(inningRecord):
-                topScoreRecordList.insert(newRank, (playerName, inningScore, (str(datetime.now().date())+"-"+str(datetime.now().hour)+":"+str(datetime.now().minute)+":"+str(datetime.now().second))))
+                topScoreRecordList.insert(newRank, (playerName, inningScore, get_datetime_string()))
                 break
             else:
                 newRank += 1
                 if newRank == len(topScoreRecordList):
-                    topScoreRecordList.insert(newRank, (playerName, inningScore, (str(datetime.now().date())+"-"+str(datetime.now().hour)+":"+str(datetime.now().minute)+":"+str(datetime.now().second))))
+                    topScoreRecordList.insert(newRank, (playerName, inningScore, get_datetime_string()))
                     break
 
     if newRank <= 10:
